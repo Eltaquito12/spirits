@@ -6,18 +6,19 @@
   <title>Rastreador de Espíritus de Fortnite</title>
   <style>
     :root {
-      --bg-dark: #0b0e14;
-      --card-bg: #161b26;
-      --border-color: #2a3245;
-      --accent-yellow: #f1c40f;
-      --accent-blue: #00d2ff;
-      --accent-green: #2ecc71;
-      --rarity-mythic: #ffd700;
+      --bg-dark: #0c0f1d;
+      --card-bg: #14192d;
+      --border-color: #262f4d;
+      --accent-yellow: #ffe600;
+      --accent-cyan: #00f0ff;
+      --accent-pink: #ff007f;
+      --accent-green: #00ff88;
+      --rarity-mythic: #ffe600;
       --rarity-legendary: #ff7700;
-      --rarity-epic: #a335ee;
-      --rarity-rare: #0070dd;
+      --rarity-epic: #b537ff;
+      --rarity-rare: #0099ff;
       --text-main: #f0f3f8;
-      --text-muted: #8c9bae;
+      --text-muted: #8e9bb4;
     }
 
     * {
@@ -49,7 +50,7 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       color: #fff;
-      text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+      text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
     }
 
     .stats-bar {
@@ -62,6 +63,7 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
 
     .stat-item {
@@ -69,9 +71,9 @@
     }
 
     .stat-val {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: bold;
-      color: var(--accent-yellow);
+      color: var(--accent-cyan);
     }
 
     .stat-lbl {
@@ -90,18 +92,24 @@
     input[type="text"] {
       flex: 1;
       min-width: 200px;
-      padding: 10px 15px;
+      padding: 12px 15px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
       background: var(--card-bg);
       color: #fff;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
     }
 
     .btn {
-      padding: 10px 18px;
+      padding: 11px 18px;
       border-radius: 8px;
-      border: none;
-      background: #2a3245;
+      border: 1px solid var(--border-color);
+      background: #1c233d;
       color: #fff;
       cursor: pointer;
       font-weight: bold;
@@ -109,13 +117,15 @@
     }
 
     .btn:hover, .btn.active {
-      background: var(--accent-blue);
+      background: var(--accent-cyan);
       color: #000;
+      border-color: var(--accent-cyan);
     }
 
     .btn-green {
-      background: #27ae60;
+      background: #00b359;
       color: #fff;
+      border: none;
     }
 
     .btn-green:hover {
@@ -123,19 +133,20 @@
       color: #000;
     }
 
-    .btn-blue {
-      background: #2980b9;
+    .btn-pink {
+      background: #c70063;
       color: #fff;
+      border: none;
     }
 
-    .btn-blue:hover {
-      background: var(--accent-blue);
-      color: #000;
+    .btn-pink:hover {
+      background: var(--accent-pink);
+      color: #fff;
     }
 
     .variants-info {
       background: var(--card-bg);
-      border-left: 4px solid var(--accent-yellow);
+      border-left: 4px solid var(--accent-pink);
       padding: 15px;
       border-radius: 8px;
       margin-bottom: 25px;
@@ -185,11 +196,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.3);
     }
 
     .spirit-title {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: bold;
     }
 
@@ -213,7 +224,7 @@
     }
 
     .spirit-desc {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
       margin-bottom: 15px;
     }
@@ -225,16 +236,16 @@
     }
 
     .variant-row {
-      background: rgba(0,0,0,0.15);
-      padding: 8px;
+      background: rgba(0,0,0,0.25);
+      padding: 8px 10px;
       border-radius: 6px;
     }
 
     .variant-header {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: bold;
-      margin-bottom: 5px;
-      color: #ddd;
+      margin-bottom: 6px;
+      color: var(--accent-cyan);
     }
 
     .levels {
@@ -244,20 +255,26 @@
 
     .lvl-btn {
       flex: 1;
-      padding: 5px 0;
+      padding: 6px 0;
       border: 1px solid var(--border-color);
-      background: rgba(255,255,255,0.05);
-      color: #8c9bae;
+      background: rgba(255,255,255,0.03);
+      color: var(--text-muted);
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.8rem;
       font-weight: bold;
+      transition: all 0.15s;
+    }
+
+    .lvl-btn:hover {
+      border-color: var(--accent-cyan);
+      color: #fff;
     }
 
     .lvl-btn.owned {
-      background: #27ae60;
-      color: #fff;
-      border-color: #2ecc71;
+      background: var(--accent-green);
+      color: #000;
+      border-color: var(--accent-green);
     }
   </style>
 </head>
@@ -296,8 +313,8 @@
     <button class="btn active" id="filter-all" onclick="setFilter('all')">Todos</button>
     <button class="btn" id="filter-missing" onclick="setFilter('missing')">Solo Faltantes</button>
 
-    <button class="btn btn-green" onclick="exportData()">💾 Guardar en Archivo</button>
-    <button class="btn btn-blue" onclick="document.getElementById('file-input').click()">📂 Cargar Archivo</button>
+    <button class="btn btn-green" onclick="exportData()">💾 Guardar Archivo</button>
+    <button class="btn btn-pink" onclick="document.getElementById('file-input').click()">📂 Cargar Archivo</button>
     <input type="file" id="file-input" accept=".json" style="display: none;" onchange="importData(event)">
   </div>
 
@@ -306,39 +323,41 @@
 
 <script>
   const spirits = [
-    { name: "Spooky Dash", rarity: "mitico", desc: "Al saltar te impulsas y atraviesas algunos objetos. Las cargas se recuperan solas y cada nivel acorta la espera. Nuevo de Halloween." },
-    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo." },
-    { name: "Crown", rarity: "mitico", desc: "Más Crown Wins tras una Victoria Magistral. Solo sube ganando partidas." },
-    { name: "Jackrabbit", rarity: "legendario", desc: "Un salto extra en el aire." },
-    { name: "Killswitch", rarity: "legendario", desc: "Entras en Hangtime (suspensión en el aire) con más precisión." },
-    { name: "X-Ray", rarity: "legendario", desc: "Marca de vez en cuando a los enemigos que tienes alrededor." },
-    { name: "Blinky", rarity: "legendario", desc: "Te camuflas un rato al recibir daño." },
-    { name: "Crash Bandicoot", rarity: "legendario", desc: "Ataque giratorio en el aire que daña y empuja a los rivales cercanos." },
-    { name: "Vampire", rarity: "legendario", desc: "Recuperas vida al hacer daño, y cada nivel sube el porcentaje. Nuevo de Halloween." },
-    { name: "The Deer", rarity: "legendario", desc: "Los ataques cuerpo a cuerpo hacen más daño, y más con cada nivel. Nuevo de Halloween." },
+    { name: "Jonesy", rarity: "raro", desc: "Pasado un rato, recupera algo de vida o escudo tras recibir daño." },
+    { name: "Aventurero", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel." },
+    { name: "Arbustín", rarity: "raro", desc: "Te pone un arbusto encima pasado un tiempo. Al nivel máximo, también al eliminar." },
     { name: "Sonic", rarity: "epico", desc: "Corres más al esprintar." },
     { name: "Tails", rarity: "epico", desc: "Planeas en el aire." },
     { name: "Shadow", rarity: "epico", desc: "Recarga solas las armas con el tiempo, también las que no llevas en la mano." },
-    { name: "Pond", rarity: "epico", desc: "Supersalto si saltas justo después de aterrizar, más alto y más a menudo con cada nivel." },
-    { name: "Morgana", rarity: "epico", desc: "Los objetos de curación te rinden más, y cada nivel lo aumenta." },
-    { name: "Dumpster Dive", rarity: "epico", desc: "Al meterte en un escondite encuentras comida que cura de más. Nuevo de Halloween." },
-    { name: "Jonesy", rarity: "raro", desc: "Pasado un rato, recupera algo de vida o escudo tras recibir daño." },
-    { name: "Adventure", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel." },
-    { name: "Bush", rarity: "raro", desc: "Te pone un arbusto encima pasado un tiempo. Al nivel máximo, también al eliminar." },
-    { name: "8-Bit", rarity: "raro", desc: "La Escopeta 8-Bit sale en tu primer cofre, con multiplicador de puntuación." },
+    { name: "8 Bits", rarity: "raro", desc: "La Escopeta 8-Bit sale en tu primer cofre, con multiplicador de puntuación." },
+    { name: "Jackrabbit", rarity: "legendario", desc: "Un salto extra en el aire." },
+    { name: "Victorioso", rarity: "mitico", desc: "Más Crown Wins tras una Victoria Magistral. Solo sube ganando partidas." },
+    { name: "Killswitch", rarity: "legendario", desc: "Entras en Hangtime (suspensión en el aire) con más precisión." },
+    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo." },
     { name: "Mega Man", rarity: "raro", desc: "Te deslizas con menos fricción. (Único espíritu sin variantes).", noVariants: true },
-    { name: "Overshield", rarity: "raro", desc: "Sobreescudo que crece con el nivel del espíritu." },
+    { name: "Protector", rarity: "raro", desc: "Sobreescudo que crece con el nivel del espíritu." },
+    { name: "Del Estanque", rarity: "epico", desc: "Supersalto si saltas justo después de aterrizar, más alto y más a menudo con cada nivel." },
+    { name: "Rayos X", rarity: "legendario", desc: "Marca de vez en cuando a los enemigos que tienes alrededor." },
     { name: "Onigiri", rarity: "raro", desc: "Overdrive después de comer o beber un consumible." },
-    { name: "Storm Scout", rarity: "raro", desc: "Overdrive tras recibir cierto daño de la tormenta. Cada nivel lo alarga." },
-    { name: "Birthday", rarity: "raro", desc: "Los cofres pueden soltar trozos de tarta al abrirlos. Al nivel máximo, también las eliminaciones." }
+    { name: "Exploratormentas", rarity: "raro", desc: "Overdrive tras recibir cierto daño de la tormenta. Cada nivel lo alarga." },
+    { name: "Blinky", rarity: "legendario", desc: "Te camuflas un rato al recibir daño." },
+    { name: "Mapache", rarity: "epico", desc: "Al meterte en un escondite encuentras comida que cura de más. Nuevo de Halloween." },
+    { name: "Cumpleañero", rarity: "raro", desc: "Los cofres pueden soltar trozos de tarta al abrirlos. Al nivel máximo, también las eliminaciones." },
+    { name: "Crash Bandicoot", rarity: "legendario", desc: "Ataque giratorio en el aire que daña y empuja a los rivales cercanos." },
+    { name: "Morgana", rarity: "epico", desc: "Los objetos de curación te rinden más, y cada nivel lo aumenta." },
+    { name: "Impulso Aterrador", rarity: "mitico", desc: "Al saltar te impulsas y atraviesas algunos objetos. Las cargas se recuperan solas y cada nivel acorta la espera. Nuevo de Halloween." },
+    { name: "Ciervo", rarity: "legendario", desc: "Los ataques cuerpo a cuerpo hacen más daño, y más con cada nivel. Nuevo de Halloween." },
+    { name: "Vampiro", rarity: "legendario", desc: "Recuperas vida al hacer daño, y cada nivel sube el porcentaje. Nuevo de Halloween." },
+    { name: "De Miel", rarity: "raro", desc: "Te otorga beneficios especiales tras consumir productos apícolas o dulces." },
+    { name: "De un Deseo", rarity: "mitico", desc: "Concede bonificaciones raras según el estado de tu partida." }
   ];
 
   const defaultVariants = ["Base", "Oro", "Hacker", "Hacker de botín", "Cazarrecompensas", "Dulce o truco"];
-  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v3')) || {};
+  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v4')) || {};
   let currentFilter = 'all';
 
   function save() {
-    localStorage.setItem('fn_spirits_state_v3', JSON.stringify(state));
+    localStorage.setItem('fn_spirits_state_v4', JSON.stringify(state));
     updateStats();
   }
 
