@@ -239,13 +239,35 @@
       background: rgba(0,0,0,0.25);
       padding: 8px 10px;
       border-radius: 6px;
+      border: 1px solid transparent;
+    }
+
+    .variant-row.has-mastery {
+      border-color: rgba(255, 230, 0, 0.4);
+      background: rgba(255, 230, 0, 0.05);
+    }
+
+    .variant-header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
     }
 
     .variant-header {
       font-size: 0.82rem;
       font-weight: bold;
-      margin-bottom: 6px;
       color: var(--accent-cyan);
+    }
+
+    .mastery-badge {
+      font-size: 0.7rem;
+      font-weight: bold;
+      background: var(--accent-yellow);
+      color: #000;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
     }
 
     .levels {
@@ -276,6 +298,13 @@
       color: #000;
       border-color: var(--accent-green);
     }
+
+    .lvl-btn.owned.mastery-btn {
+      background: var(--accent-yellow);
+      color: #000;
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 8px rgba(255, 230, 0, 0.5);
+    }
   </style>
 </head>
 <body>
@@ -289,6 +318,10 @@
     <div class="stat-item">
       <div class="stat-val" id="total-collected">0 / 0</div>
       <div class="stat-lbl">Variantes Obtenidas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val" id="total-mastery">0 / 0</div>
+      <div class="stat-lbl">Maestrías Obtenidas (Niv. 5)</div>
     </div>
     <div class="stat-item">
       <div class="stat-val" id="progress-percent">0%</div>
@@ -313,6 +346,7 @@
     <input type="text" id="search" placeholder="Buscar espíritu..." oninput="render()">
     <button class="btn active" id="filter-all" onclick="setFilter('all')">Todos</button>
     <button class="btn" id="filter-missing" onclick="setFilter('missing')">Solo Faltantes</button>
+    <button class="btn" id="filter-mastery" onclick="setFilter('mastery')">Faltan Maestría</button>
 
     <button class="btn btn-green" onclick="exportData()">💾 Guardar Archivo</button>
     <button class="btn btn-pink" onclick="document.getElementById('file-input').click()">📂 Cargar Archivo</button>
@@ -354,11 +388,11 @@
   ];
 
   const defaultVariants = ["Base", "Oro", "Hacker", "Hacker de botín", "Cazarrecompensas", "Dulce o truco"];
-  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v6')) || {};
+  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v7')) || {};
   let currentFilter = 'all';
 
   function save() {
-    localStorage.setItem('fn_spirits_state_v6', JSON.stringify(state));
+    localStorage.setItem('fn_spirits_state_v7', JSON.stringify(state));
     updateStats();
   }
 
@@ -377,6 +411,7 @@
     currentFilter = f;
     document.getElementById('filter-all').classList.toggle('active', f === 'all');
     document.getElementById('filter-missing').classList.toggle('active', f === 'missing');
+    document.getElementById('filter-mastery').classList.toggle('active', f === 'mastery');
     render();
   }
 
@@ -423,18 +458,22 @@
   function updateStats() {
     let totalPossible = 0;
     let totalOwned = 0;
+    let totalMastered = 0;
     
     spirits.forEach(s => {
       const vars = getVariantsForSpirit(s);
       totalPossible += vars.length;
       vars.forEach(v => {
-        if (state[`${s.name}_${v}`]) {
+        const lvl = state[`${s.name}_${v}`];
+        if (lvl) {
           totalOwned++;
+          if (lvl === 5) totalMastered++;
         }
       });
     });
 
     document.getElementById('total-collected').innerText = `${totalOwned} / ${totalPossible}`;
+    document.getElementById('total-mastery').innerText = `${totalMastered} / ${totalPossible}`;
     document.getElementById('progress-percent').innerText = `${Math.round((totalOwned / totalPossible) * 100)}%`;
   }
 
@@ -447,28 +486,41 @@
       if (search && !s.name.toLowerCase().includes(search)) return;
 
       const vars = getVariantsForSpirit(s);
+      
       let missingVariants = vars.filter(v => !state[`${s.name}_${v}`]);
+      let missingMastery = vars.filter(v => state[`${s.name}_${v}`] !== 5);
 
       if (currentFilter === 'missing' && missingVariants.length === 0) return;
+      if (currentFilter === 'mastery' && missingMastery.length === 0) return;
 
       const card = document.createElement('div');
       card.className = `spirit-card ${s.rarity}`;
 
       let variantsHtml = '';
-      const variantsToDisplay = (currentFilter === 'missing') ? missingVariants : vars;
+      let variantsToDisplay = vars;
+
+      if (currentFilter === 'missing') variantsToDisplay = missingVariants;
+      else if (currentFilter === 'mastery') variantsToDisplay = missingMastery;
+
+      let allVarsMastered = vars.length > 0 && vars.every(v => state[`${s.name}_${v}`] === 5);
 
       variantsToDisplay.forEach(v => {
         let levelBtns = '';
         const currentSelectedLvl = state[`${s.name}_${v}`];
+        const isMastered = currentSelectedLvl === 5;
 
         for (let l = 1; l <= 5; l++) {
           const isOwned = currentSelectedLvl === l;
-          levelBtns += `<button class="lvl-btn ${isOwned ? 'owned' : ''}" onclick="setLevel('${s.name}', '${v}', ${l})">Niv. ${l}</button>`;
+          const isMasteryLevel = l === 5;
+          levelBtns += `<button class="lvl-btn ${isOwned ? 'owned' : ''} ${isOwned && isMasteryLevel ? 'mastery-btn' : ''}" onclick="setLevel('${s.name}', '${v}', ${l})">Niv. ${l}</button>`;
         }
 
         variantsHtml += `
-          <div class="variant-row">
-            <div class="variant-header">${v}</div>
+          <div class="variant-row ${isMastered ? 'has-mastery' : ''}">
+            <div class="variant-header-container">
+              <span class="variant-header">${v}</span>
+              ${isMastered ? '<span class="mastery-badge">⭐ MAESTRÍA</span>' : ''}
+            </div>
             <div class="levels">${levelBtns}</div>
           </div>
         `;
@@ -476,7 +528,7 @@
 
       card.innerHTML = `
         <div class="card-header">
-          <span class="spirit-title">${s.name}</span>
+          <span class="spirit-title">${allVarsMastered ? '👑 ' : ''}${s.name}</span>
           <span class="rarity-badge">${s.rarity}</span>
         </div>
         <div class="card-body">
