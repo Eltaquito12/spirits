@@ -447,18 +447,17 @@
       if (search && !s.name.toLowerCase().includes(search)) return;
 
       const vars = getVariantsForSpirit(s);
-      let hasMissing = false;
-      vars.forEach(v => {
-        if (!state[`${s.name}_${v}`]) hasMissing = true;
-      });
+      let missingVariants = vars.filter(v => !state[`${s.name}_${v}`]);
 
-      if (currentFilter === 'missing' && !hasMissing) return;
+      if (currentFilter === 'missing' && missingVariants.length === 0) return;
 
       const card = document.createElement('div');
       card.className = `spirit-card ${s.rarity}`;
 
       let variantsHtml = '';
-      vars.forEach(v => {
+      const variantsToDisplay = (currentFilter === 'missing') ? missingVariants : vars;
+
+      variantsToDisplay.forEach(v => {
         let levelBtns = '';
         const currentSelectedLvl = state[`${s.name}_${v}`];
 
