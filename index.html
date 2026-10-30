@@ -305,6 +305,7 @@
       <div class="variant-card"><strong>Hacker de botín:</strong> Sube la probabilidad de que salgan los objetos de tus Loot Hacks.</div>
       <div class="variant-card"><strong>Cazarrecompensas:</strong> Puedes encontrar espíritus al eliminar rivales (XP solo con eliminaciones).</div>
       <div class="variant-card"><strong>Dulce o truco:</strong> Edición especial temática de Halloween.</div>
+      <div class="variant-card"><strong>Patito:</strong> Edición especial patito de goma.</div>
     </div>
   </div>
 
@@ -323,9 +324,9 @@
 
 <script>
   const spirits = [
-    { name: "Jonesy", rarity: "raro", desc: "Pasado un rato, recupera algo de vida o escudo tras recibir daño." },
-    { name: "Aventurero", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel." },
-    { name: "Arbustín", rarity: "raro", desc: "Te pone un arbusto encima pasado un tiempo. Al nivel máximo, también al eliminar." },
+    { name: "Jonesy", rarity: "raro", desc: "Pasado un rato, recupera algo de vida o escudo tras recibir daño.", hasPatito: true },
+    { name: "Aventurero", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel.", hasPatito: true },
+    { name: "Arbustín", rarity: "raro", desc: "Te pone un arbusto encima pasado un tiempo. Al nivel máximo, también al eliminar.", hasPatito: true },
     { name: "Sonic", rarity: "epico", desc: "Corres más al esprintar." },
     { name: "Tails", rarity: "epico", desc: "Planeas en el aire." },
     { name: "Shadow", rarity: "epico", desc: "Recarga solas las armas con el tiempo, también las que no llevas en la mano." },
@@ -333,7 +334,7 @@
     { name: "Jackrabbit", rarity: "legendario", desc: "Un salto extra en el aire." },
     { name: "Victorioso", rarity: "mitico", desc: "Más Crown Wins tras una Victoria Magistral. Solo sube ganando partidas." },
     { name: "Killswitch", rarity: "legendario", desc: "Entras en Hangtime (suspensión en el aire) con más precisión." },
-    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo." },
+    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo.", hasPatito: true },
     { name: "Mega Man", rarity: "raro", desc: "Te deslizas con menos fricción. (Único espíritu sin variantes).", noVariants: true },
     { name: "Protector", rarity: "raro", desc: "Sobreescudo que crece con el nivel del espíritu." },
     { name: "Del Estanque", rarity: "epico", desc: "Supersalto si saltas justo después de aterrizar, más alto y más a menudo con cada nivel." },
@@ -345,7 +346,7 @@
     { name: "Cumpleañero", rarity: "raro", desc: "Los cofres pueden soltar trozos de tarta al abrirlos. Al nivel máximo, también las eliminaciones." },
     { name: "Crash Bandicoot", rarity: "legendario", desc: "Ataque giratorio en el aire que daña y empuja a los rivales cercanos." },
     { name: "Morgana", rarity: "epico", desc: "Los objetos de curación te rinden más, y cada nivel lo aumenta." },
-    { name: "Impulso Aterrador", rarity: "mitico", desc: "Al saltar te impulsas y atraviesas algunos objetos. Las cargas se recuperan solas y cada nivel acorta la espera. Nuevo de Halloween." },
+    { name: "Impulso Aterrador", rarity: "mitico", desc: "Al saltar te impulsas y atraviesas algunos objetos. Las cargas se recuperan solas y cada nivel acorta la espera. Nuevo de Halloween.", hasPatito: true },
     { name: "Ciervo", rarity: "legendario", desc: "Los ataques cuerpo a cuerpo hacen más daño, y más con cada nivel. Nuevo de Halloween." },
     { name: "Vampiro", rarity: "legendario", desc: "Recuperas vida al hacer daño, y cada nivel sube el porcentaje. Nuevo de Halloween." },
     { name: "De Miel", rarity: "raro", desc: "Te otorga beneficios especiales tras consumir productos apícolas o dulces." },
@@ -353,11 +354,11 @@
   ];
 
   const defaultVariants = ["Base", "Oro", "Hacker", "Hacker de botín", "Cazarrecompensas", "Dulce o truco"];
-  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v5')) || {};
+  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v6')) || {};
   let currentFilter = 'all';
 
   function save() {
-    localStorage.setItem('fn_spirits_state_v5', JSON.stringify(state));
+    localStorage.setItem('fn_spirits_state_v6', JSON.stringify(state));
     updateStats();
   }
 
@@ -380,7 +381,10 @@
   }
 
   function getVariantsForSpirit(s) {
-    return s.noVariants ? ["Base"] : defaultVariants;
+    if (s.noVariants) return ["Base"];
+    let vars = [...defaultVariants];
+    if (s.hasPatito) vars.push("Patito");
+    return vars;
   }
 
   function exportData() {
