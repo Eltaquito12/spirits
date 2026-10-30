@@ -321,7 +321,7 @@
     </div>
     <div class="stat-item">
       <div class="stat-val" id="total-mastery">0 / 0</div>
-      <div class="stat-lbl">Maestrías Obtenidas (Niv. 5)</div>
+      <div class="stat-lbl">Maestrías Obtenidas</div>
     </div>
     <div class="stat-item">
       <div class="stat-val" id="progress-percent">0%</div>
@@ -359,7 +359,7 @@
 <script>
   const spirits = [
     { name: "Jonesy", rarity: "raro", desc: "Pasado un rato, recupera algo de vida o escudo tras recibir daño.", hasPatito: true },
-    { name: "Aventurero", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel.", hasPatito: true },
+    { name: "Aventurero", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel.", hasPatito: true, masteryLvl: 1 },
     { name: "Arbustín", rarity: "raro", desc: "Te pone un arbusto encima pasado un tiempo. Al nivel máximo, también al eliminar.", hasPatito: true },
     { name: "Sonic", rarity: "epico", desc: "Corres más al esprintar." },
     { name: "Tails", rarity: "epico", desc: "Planeas en el aire." },
@@ -368,7 +368,7 @@
     { name: "Jackrabbit", rarity: "legendario", desc: "Un salto extra en el aire." },
     { name: "Victorioso", rarity: "mitico", desc: "Más Crown Wins tras una Victoria Magistral. Solo sube ganando partidas." },
     { name: "Killswitch", rarity: "legendario", desc: "Entras en Hangtime (suspensión en el aire) con más precisión." },
-    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo.", hasPatito: true },
+    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo.", hasPatito: true, masteryLvl: 1 },
     { name: "Mega Man", rarity: "raro", desc: "Te deslizas con menos fricción. (Único espíritu sin variantes).", noVariants: true },
     { name: "Protector", rarity: "raro", desc: "Sobreescudo que crece con el nivel del espíritu." },
     { name: "Del Estanque", rarity: "epico", desc: "Supersalto si saltas justo después de aterrizar, más alto y más a menudo con cada nivel." },
@@ -388,11 +388,11 @@
   ];
 
   const defaultVariants = ["Base", "Oro", "Hacker", "Hacker de botín", "Cazarrecompensas", "Dulce o truco"];
-  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v7')) || {};
+  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v8')) || {};
   let currentFilter = 'all';
 
   function save() {
-    localStorage.setItem('fn_spirits_state_v7', JSON.stringify(state));
+    localStorage.setItem('fn_spirits_state_v8', JSON.stringify(state));
     updateStats();
   }
 
@@ -420,6 +420,10 @@
     let vars = [...defaultVariants];
     if (s.hasPatito) vars.push("Patito");
     return vars;
+  }
+
+  function getMasteryLevel(s) {
+    return s.masteryLvl || 5;
   }
 
   function exportData() {
@@ -462,12 +466,13 @@
     
     spirits.forEach(s => {
       const vars = getVariantsForSpirit(s);
+      const reqMastery = getMasteryLevel(s);
       totalPossible += vars.length;
       vars.forEach(v => {
         const lvl = state[`${s.name}_${v}`];
         if (lvl) {
           totalOwned++;
-          if (lvl === 5) totalMastered++;
+          if (lvl >= reqMastery) totalMastered++;
         }
       });
     });
@@ -486,9 +491,13 @@
       if (search && !s.name.toLowerCase().includes(search)) return;
 
       const vars = getVariantsForSpirit(s);
-      
+      const reqMastery = getMasteryLevel(s);
+
       let missingVariants = vars.filter(v => !state[`${s.name}_${v}`]);
-      let missingMastery = vars.filter(v => state[`${s.name}_${v}`] !== 5);
+      let missingMastery = vars.filter(v => {
+        const lvl = state[`${s.name}_${v}`];
+        return !lvl || lvl < reqMastery;
+      });
 
       if (currentFilter === 'missing' && missingVariants.length === 0) return;
       if (currentFilter === 'mastery' && missingMastery.length === 0) return;
@@ -502,16 +511,19 @@
       if (currentFilter === 'missing') variantsToDisplay = missingVariants;
       else if (currentFilter === 'mastery') variantsToDisplay = missingMastery;
 
-      let allVarsMastered = vars.length > 0 && vars.every(v => state[`${s.name}_${v}`] === 5);
+      let allVarsMastered = vars.length > 0 && vars.every(v => {
+        const lvl = state[`${s.name}_${v}`];
+        return lvl && lvl >= reqMastery;
+      });
 
       variantsToDisplay.forEach(v => {
         let levelBtns = '';
         const currentSelectedLvl = state[`${s.name}_${v}`];
-        const isMastered = currentSelectedLvl === 5;
+        const isMastered = currentSelectedLvl && currentSelectedLvl >= reqMastery;
 
         for (let l = 1; l <= 5; l++) {
           const isOwned = currentSelectedLvl === l;
-          const isMasteryLevel = l === 5;
+          const isMasteryLevel = l === reqMastery;
           levelBtns += `<button class="lvl-btn ${isOwned ? 'owned' : ''} ${isOwned && isMasteryLevel ? 'mastery-btn' : ''}" onclick="setLevel('${s.name}', '${v}', ${l})">Niv. ${l}</button>`;
         }
 
@@ -519,7 +531,7 @@
           <div class="variant-row ${isMastered ? 'has-mastery' : ''}">
             <div class="variant-header-container">
               <span class="variant-header">${v}</span>
-              ${isMastered ? '<span class="mastery-badge">⭐ MAESTRÍA</span>' : ''}
+              ${isMastered ? `<span class="mastery-badge">⭐ MAESTRÍA (Niv. ${reqMastery})</span>` : ''}
             </div>
             <div class="levels">${levelBtns}</div>
           </div>
