@@ -6,17 +6,14 @@
   <title>Rastreador de Espíritus de Fortnite</title>
   <style>
     :root {
-      --bg-dark: #0c0f1d;
-      --card-bg: #14192d;
-      --border-color: #262f4d;
+      --bg-dark: #090c15;
+      --card-bg: #111628;
+      --card-inner: #0b0e1a;
+      --border-color: #1e2640;
       --accent-yellow: #ffe600;
       --accent-cyan: #00f0ff;
-      --accent-pink: #ff007f;
+      --accent-purple: #9d4edd;
       --accent-green: #00ff88;
-      --rarity-mythic: #ffe600;
-      --rarity-legendary: #ff7700;
-      --rarity-epic: #b537ff;
-      --rarity-rare: #0099ff;
       --text-main: #f0f3f8;
       --text-muted: #8e9bb4;
     }
@@ -25,7 +22,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
@@ -36,7 +33,7 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1300px;
       margin: 0 auto;
     }
 
@@ -63,7 +60,7 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
 
     .stat-item {
@@ -79,6 +76,33 @@
     .stat-lbl {
       font-size: 0.85rem;
       color: var(--text-muted);
+    }
+
+    .variants-info {
+      background: var(--card-bg);
+      border-left: 4px solid var(--accent-purple);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      font-size: 0.9rem;
+    }
+
+    .variants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .variant-card {
+      background: rgba(255,255,255,0.03);
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .variant-card strong {
+      color: var(--accent-yellow);
     }
 
     .controls {
@@ -140,40 +164,13 @@
     }
 
     .btn-pink:hover {
-      background: var(--accent-pink);
+      background: #ff007f;
       color: #fff;
-    }
-
-    .variants-info {
-      background: var(--card-bg);
-      border-left: 4px solid var(--accent-pink);
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 25px;
-      font-size: 0.9rem;
-    }
-
-    .variants-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .variant-card {
-      background: rgba(255,255,255,0.03);
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .variant-card strong {
-      color: var(--accent-yellow);
     }
 
     .spirit-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 20px;
     }
 
@@ -184,127 +181,115 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: all 0.2s ease-in-out;
     }
 
-    .spirit-card.mitico { border-color: var(--rarity-mythic); }
-    .spirit-card.legendario { border-color: var(--rarity-legendary); }
-    .spirit-card.epico { border-color: var(--rarity-epic); }
-    .spirit-card.raro { border-color: var(--rarity-rare); }
+    .spirit-card:hover {
+      border-color: var(--border-color);
+    }
 
     .card-header {
       padding: 12px 15px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: rgba(0,0,0,0.3);
+      justify-content: space-between;
+      background: rgba(0,0,0,0.4);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .spirit-title {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: bold;
+      color: #fff;
     }
-
-    .rarity-badge {
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 12px;
-      text-transform: uppercase;
-      font-weight: bold;
-      color: #000;
-    }
-
-    .mitico .rarity-badge { background: var(--rarity-mythic); }
-    .legendario .rarity-badge { background: var(--rarity-legendary); }
-    .epico .rarity-badge { background: var(--rarity-epic); color: #fff; }
-    .raro .rarity-badge { background: var(--rarity-rare); color: #fff; }
 
     .card-body {
       padding: 15px;
       flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .spirit-desc {
       font-size: 0.88rem;
       color: var(--text-muted);
       margin-bottom: 15px;
+      min-height: 42px;
     }
 
-    .variants-list {
+    .variants-gallery {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .variant-item {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-    }
-
-    .variant-row {
-      background: rgba(0,0,0,0.25);
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid transparent;
-    }
-
-    .variant-row.has-mastery {
-      border-color: rgba(255, 230, 0, 0.4);
-      background: rgba(255, 230, 0, 0.05);
-    }
-
-    .variant-header-container {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .variant-header {
-      font-size: 0.82rem;
-      font-weight: bold;
-      color: var(--accent-cyan);
-    }
-
-    .mastery-badge {
-      font-size: 0.7rem;
-      font-weight: bold;
-      background: var(--accent-yellow);
-      color: #000;
-      padding: 1px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-
-    .levels {
-      display: flex;
-      gap: 5px;
-    }
-
-    .lvl-btn {
-      flex: 1;
-      padding: 6px 0;
-      border: 1px solid var(--border-color);
-      background: rgba(255,255,255,0.03);
-      color: var(--text-muted);
-      border-radius: 4px;
       cursor: pointer;
-      font-size: 0.8rem;
+      flex: 1;
+      padding: 8px 4px;
+      background: var(--card-inner);
+      border-radius: 8px;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .variant-item:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .variant-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 6px;
+      filter: grayscale(80%) opacity(0.5);
+      transition: all 0.2s ease;
+    }
+
+    .variant-name {
+      font-size: 0.75rem;
       font-weight: bold;
-      transition: all 0.15s;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .lvl-btn:hover {
+    /* Estado cuando la variante ha sido CONSEGUIDA */
+    .variant-item.owned {
+      background: rgba(0, 255, 136, 0.05);
+    }
+
+    .variant-item.owned .variant-img {
+      filter: grayscale(0%) opacity(1);
+    }
+
+    .variant-item.Base.owned {
       border-color: var(--accent-cyan);
-      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
     }
+    .variant-item.Base.owned .variant-name { color: var(--accent-cyan); }
 
-    .lvl-btn.owned {
-      background: var(--accent-green);
-      color: #000;
-      border-color: var(--accent-green);
+    .variant-item.Maldito.owned,
+    .variant-item.Cursed.owned {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
     }
+    .variant-item.Maldito.owned .variant-name,
+    .variant-item.Cursed.owned .variant-name { color: var(--accent-purple); }
 
-    .lvl-btn.owned.mastery-btn {
-      background: var(--accent-yellow);
-      color: #000;
+    .variant-item.Fortuna.owned,
+    .variant-item.Fortune.owned {
       border-color: var(--accent-yellow);
-      box-shadow: 0 0 8px rgba(255, 230, 0, 0.5);
+      box-shadow: 0 0 10px rgba(255, 230, 0, 0.3);
     }
+    .variant-item.Fortuna.owned .variant-name,
+    .variant-item.Fortune.owned .variant-name { color: var(--accent-yellow); }
   </style>
 </head>
 <body>
@@ -320,25 +305,17 @@
       <div class="stat-lbl">Variantes Obtenidas</div>
     </div>
     <div class="stat-item">
-      <div class="stat-val" id="total-mastery">0 / 0</div>
-      <div class="stat-lbl">Maestrías Obtenidas</div>
-    </div>
-    <div class="stat-item">
       <div class="stat-val" id="progress-percent">0%</div>
-      <div class="stat-lbl">Progreso Total</div>
+      <div class="stat-lbl">Progreso Colección</div>
     </div>
   </div>
 
   <div class="variants-info">
-    <strong>✨ Efectos de las Variantes:</strong>
+    <strong>✨ Efectos de las Variantes (Haz clic en la imagen para marcar como conseguido):</strong>
     <div class="variants-grid">
       <div class="variant-card"><strong>Base:</strong> Poder original del espíritu.</div>
-      <div class="variant-card"><strong>Oro:</strong> Triple de XP extra por eliminación.</div>
-      <div class="variant-card"><strong>Hacker:</strong> Todo lo que pulsas cuenta como correcto al meter los Cheat Codes.</div>
-      <div class="variant-card"><strong>Hacker de botín:</strong> Sube la probabilidad de que salgan los objetos de tus Loot Hacks.</div>
-      <div class="variant-card"><strong>Cazarrecompensas:</strong> Puedes encontrar espíritus al eliminar rivales (XP solo con eliminaciones).</div>
-      <div class="variant-card"><strong>Dulce o truco:</strong> Edición especial temática de Halloween.</div>
-      <div class="variant-card"><strong>Patito:</strong> Edición especial patito de goma.</div>
+      <div class="variant-card"><strong>Maldito (Cursed):</strong> Aumenta aparición de espíritus raros, pero el agua causa daño.</div>
+      <div class="variant-card"><strong>Fortuna (Fortune):</strong> Revela la ubicación exacta de los cofres cercanos.</div>
     </div>
   </div>
 
@@ -346,7 +323,6 @@
     <input type="text" id="search" placeholder="Buscar espíritu..." oninput="render()">
     <button class="btn active" id="filter-all" onclick="setFilter('all')">Todos</button>
     <button class="btn" id="filter-missing" onclick="setFilter('missing')">Solo Faltantes</button>
-    <button class="btn" id="filter-mastery" onclick="setFilter('mastery')">Faltan Maestría</button>
 
     <button class="btn btn-green" onclick="exportData()">💾 Guardar Archivo</button>
     <button class="btn btn-pink" onclick="document.getElementById('file-input').click()">📂 Cargar Archivo</button>
@@ -357,52 +333,39 @@
 </div>
 
 <script>
+  // Mapeo exacto de espíritus con sus imágenes numeradas correspondientes
   const spirits = [
-    { name: "Jonesy", rarity: "raro", desc: "Pasado un rato, recupera algo de vida o escudo tras recibir daño.", hasPatito: true },
-    { name: "Aventurero", rarity: "raro", desc: "Mejora un objeto al azar de tu inventario en cada nivel.", hasPatito: true, masteryLvl: 1 },
-    { name: "Arbustín", rarity: "raro", desc: "Te pone un arbusto encima pasado un tiempo. Al nivel máximo, también al eliminar.", hasPatito: true },
-    { name: "Sonic", rarity: "epico", desc: "Corres más al esprintar." },
-    { name: "Tails", rarity: "epico", desc: "Planeas en el aire." },
-    { name: "Shadow", rarity: "epico", desc: "Recarga solas las armas con el tiempo, también las que no llevas en la mano." },
-    { name: "8 Bits", rarity: "raro", desc: "La Escopeta 8-Bit sale en tu primer cofre, con multiplicador de puntuación." },
-    { name: "Jackrabbit", rarity: "legendario", desc: "Un salto extra en el aire." },
-    { name: "Victorioso", rarity: "mitico", desc: "Más Crown Wins tras una Victoria Magistral. Solo sube ganando partidas." },
-    { name: "Killswitch", rarity: "legendario", desc: "Entras en Hangtime (suspensión en el aire) con más precisión." },
-    { name: "Klombo", rarity: "mitico", desc: "Objetos al azar en cada nivel. Solo sube usando consumibles de vida o escudo.", hasPatito: true, masteryLvl: 1 },
-    { name: "Mega Man", rarity: "raro", desc: "Te deslizas con menos fricción. (Único espíritu sin variantes).", noVariants: true },
-    { name: "Protector", rarity: "raro", desc: "Sobreescudo que crece con el nivel del espíritu." },
-    { name: "Del Estanque", rarity: "epico", desc: "Supersalto si saltas justo después de aterrizar, más alto y más a menudo con cada nivel." },
-    { name: "Rayos X", rarity: "legendario", desc: "Marca de vez en cuando a los enemigos que tienes alrededor." },
-    { name: "Onigiri", rarity: "raro", desc: "Overdrive después de comer o beber un consumible." },
-    { name: "Exploratormentas", rarity: "raro", desc: "Overdrive tras recibir cierto daño de la tormenta. Cada nivel lo alarga." },
-    { name: "Blinky", rarity: "legendario", desc: "Te camuflas un rato al recibir daño." },
-    { name: "Mapache", rarity: "epico", desc: "Al meterte en un escondite encuentras comida que cura de más. Nuevo de Halloween." },
-    { name: "Cumpleañero", rarity: "raro", desc: "Los cofres pueden soltar trozos de tarta al abrirlos. Al nivel máximo, también las eliminaciones." },
-    { name: "Crash Bandicoot", rarity: "legendario", desc: "Ataque giratorio en el aire que daña y empuja a los rivales cercanos." },
-    { name: "Morgana", rarity: "epico", desc: "Los objetos de curación te rinden más, y cada nivel lo aumenta." },
-    { name: "Impulso Aterrador", rarity: "mitico", desc: "Al saltar te impulsas y atraviesas algunos objetos. Las cargas se recuperan solas y cada nivel acorta la espera. Nuevo de Halloween.", hasPatito: true },
-    { name: "Ciervo", rarity: "legendario", desc: "Los ataques cuerpo a cuerpo hacen más daño, y más con cada nivel. Nuevo de Halloween." },
-    { name: "Vampiro", rarity: "legendario", desc: "Recuperas vida al hacer daño, y cada nivel sube el porcentaje. Nuevo de Halloween." },
-    { name: "De Miel", rarity: "raro", desc: "Te otorga beneficios especiales tras consumir productos apícolas o dulces." },
-    { name: "De un Deseo", rarity: "mitico", desc: "Concede bonificaciones raras según el estado de tu partida." }
+    { name: "Barry O'Fish", desc: "Gasta menos energía al esprintar en el agua. Consigue el efecto de cachetada al nivel máximo.", images: { Base: "espiritus/001.png", Maldito: "espiritus/002.png", Fortuna: "espiritus/003.png" } },
+    { name: "Plundarrgh", desc: "Abre cofres para aumentar la velocidad de movimiento y la del pico.", images: { Base: "espiritus/004.png", Maldito: "espiritus/005.png", Fortuna: "espiritus/006.png" } },
+    { name: "Wayfinder", desc: "Revela espíritus cercanos y genera botín adicional en cofres enterrados.", images: { Base: "espiritus/007.png", Maldito: "espiritus/008.png", Fortuna: "espiritus/009.png" } },
+    { name: "Transponder Snail", desc: "Espíritu de comunicación especial de One Piece.", onlyBase: true, images: { Base: "espiritus/010.png" } },
+    { name: "Re-Pete", desc: "Recarga más rápido con la posibilidad de recuperar munición.", images: { Base: "espiritus/011.png", Maldito: "espiritus/012.png", Fortuna: "espiritus/013.png" } },
+    { name: "Halfpeeld", desc: "Marca eliminaciones en el mapa. El alcance de detección aumenta con cada nivel.", images: { Base: "espiritus/014.png", Maldito: "espiritus/015.png", Fortuna: "espiritus/016.png" } },
+    { name: "Lil' Flacko", desc: "Crea una pequeña onda expansiva al aterrizar, que hace retroceder a los oponentes.", images: { Base: "espiritus/017.png", Maldito: "espiritus/018.png", Fortuna: "espiritus/019.png" } },
+    { name: "Lil' Uzi Vert Jr.", desc: "Proporciona mejoras de movilidad y velocidad de reacción en combate.", images: { Base: "espiritus/020.png", Maldito: "espiritus/021.png", Fortuna: "espiritus/022.png" } },
+    { name: "Lil' Squibbly", desc: "Tírate en los pozos de pesca para atrapar peces y conseguir botín adicional extra.", images: { Base: "espiritus/023.png", Maldito: "espiritus/024.png", Fortuna: "espiritus/025.png" } },
+    { name: "Dulces sueños", desc: "Otorga un objeto aleatorio con cada subida de nivel y, al nivel máximo, suelta botín mítico.", onlyBase: true, images: { Base: "espiritus/026.png" } },
+    { name: "Chester", desc: "Puede hacer que aparezca botín adicional en cofres y anula el daño de caída.", images: { Base: "espiritus/027.png", Maldito: "espiritus/028.png", Fortuna: "espiritus/029.png" } },
+    { name: "Exmarks", desc: "Revela mapas del tesoro y carteles de «Se busca» cercanos. Genera un mapa del tesoro al nivel máximo.", images: { Base: "espiritus/030.png", Maldito: "espiritus/031.png", Fortuna: "espiritus/032.png" } },
+    { name: "Algas", desc: "Recupera salud con el tiempo mientras estás en el agua. Cura más con cada nivel.", images: { Base: "espiritus/033.png", Maldito: "espiritus/034.png", Fortuna: "espiritus/035.png" } }
   ];
 
-  const defaultVariants = ["Base", "Oro", "Hacker", "Hacker de botín", "Cazarrecompensas", "Dulce o truco"];
-  let state = JSON.parse(localStorage.getItem('fn_spirits_state_v8')) || {};
+  const defaultVariants = ["Base", "Maldito", "Fortuna"];
+  let state = JSON.parse(localStorage.getItem('fn_spirits_v10')) || {};
   let currentFilter = 'all';
 
   function save() {
-    localStorage.setItem('fn_spirits_state_v8', JSON.stringify(state));
+    localStorage.setItem('fn_spirits_v10', JSON.stringify(state));
     updateStats();
   }
 
-  function setLevel(spiritName, variant, level) {
+  function escapeQuotes(str) {
+    return str.replace(/'/g, "\\'");
+  }
+
+  function toggleVariant(spiritName, variant) {
     const key = `${spiritName}_${variant}`;
-    if (state[key] === level) {
-      delete state[key];
-    } else {
-      state[key] = level;
-    }
+    state[key] = !state[key];
     save();
     render();
   }
@@ -411,19 +374,11 @@
     currentFilter = f;
     document.getElementById('filter-all').classList.toggle('active', f === 'all');
     document.getElementById('filter-missing').classList.toggle('active', f === 'missing');
-    document.getElementById('filter-mastery').classList.toggle('active', f === 'mastery');
     render();
   }
 
   function getVariantsForSpirit(s) {
-    if (s.noVariants) return ["Base"];
-    let vars = [...defaultVariants];
-    if (s.hasPatito) vars.push("Patito");
-    return vars;
-  }
-
-  function getMasteryLevel(s) {
-    return s.masteryLvl || 5;
+    return s.onlyBase ? ["Base"] : defaultVariants;
   }
 
   function exportData() {
@@ -462,24 +417,17 @@
   function updateStats() {
     let totalPossible = 0;
     let totalOwned = 0;
-    let totalMastered = 0;
     
     spirits.forEach(s => {
       const vars = getVariantsForSpirit(s);
-      const reqMastery = getMasteryLevel(s);
       totalPossible += vars.length;
       vars.forEach(v => {
-        const lvl = state[`${s.name}_${v}`];
-        if (lvl) {
-          totalOwned++;
-          if (lvl >= reqMastery) totalMastered++;
-        }
+        if (state[`${s.name}_${v}`]) totalOwned++;
       });
     });
 
     document.getElementById('total-collected').innerText = `${totalOwned} / ${totalPossible}`;
-    document.getElementById('total-mastery').innerText = `${totalMastered} / ${totalPossible}`;
-    document.getElementById('progress-percent').innerText = `${Math.round((totalOwned / totalPossible) * 100)}%`;
+    document.getElementById('progress-percent').innerText = `${totalPossible > 0 ? Math.round((totalOwned / totalPossible) * 100) : 0}%`;
   }
 
   function render() {
@@ -491,61 +439,37 @@
       if (search && !s.name.toLowerCase().includes(search)) return;
 
       const vars = getVariantsForSpirit(s);
-      const reqMastery = getMasteryLevel(s);
-
-      let missingVariants = vars.filter(v => !state[`${s.name}_${v}`]);
-      let missingMastery = vars.filter(v => {
-        const lvl = state[`${s.name}_${v}`];
-        return !lvl || lvl < reqMastery;
+      let hasMissing = false;
+      vars.forEach(v => {
+        if (!state[`${s.name}_${v}`]) hasMissing = true;
       });
 
-      if (currentFilter === 'missing' && missingVariants.length === 0) return;
-      if (currentFilter === 'mastery' && missingMastery.length === 0) return;
+      if (currentFilter === 'missing' && !hasMissing) return;
 
       const card = document.createElement('div');
-      card.className = `spirit-card ${s.rarity}`;
+      card.className = `spirit-card`;
 
       let variantsHtml = '';
-      let variantsToDisplay = vars;
-
-      if (currentFilter === 'missing') variantsToDisplay = missingVariants;
-      else if (currentFilter === 'mastery') variantsToDisplay = missingMastery;
-
-      let allVarsMastered = vars.length > 0 && vars.every(v => {
-        const lvl = state[`${s.name}_${v}`];
-        return lvl && lvl >= reqMastery;
-      });
-
-      variantsToDisplay.forEach(v => {
-        let levelBtns = '';
-        const currentSelectedLvl = state[`${s.name}_${v}`];
-        const isMastered = currentSelectedLvl && currentSelectedLvl >= reqMastery;
-
-        for (let l = 1; l <= 5; l++) {
-          const isOwned = currentSelectedLvl === l;
-          const isMasteryLevel = l === reqMastery;
-          levelBtns += `<button class="lvl-btn ${isOwned ? 'owned' : ''} ${isOwned && isMasteryLevel ? 'mastery-btn' : ''}" onclick="setLevel('${s.name}', '${v}', ${l})">Niv. ${l}</button>`;
-        }
+      vars.forEach(v => {
+        const isOwned = !!state[`${s.name}_${v}`];
+        const safeName = escapeQuotes(s.name);
+        const imgSrc = s.images[v] || 'https://via.placeholder.com/60/111628/00f0ff?text=👻';
 
         variantsHtml += `
-          <div class="variant-row ${isMastered ? 'has-mastery' : ''}">
-            <div class="variant-header-container">
-              <span class="variant-header">${v}</span>
-              ${isMastered ? `<span class="mastery-badge">⭐ MAESTRÍA (Niv. ${reqMastery})</span>` : ''}
-            </div>
-            <div class="levels">${levelBtns}</div>
+          <div class="variant-item ${v} ${isOwned ? 'owned' : ''}" onclick="toggleVariant('${safeName}', '${v}')">
+            <img src="${imgSrc}" class="variant-img" alt="${s.name} (${v})" onerror="this.src='https://via.placeholder.com/60/111628/00f0ff?text=👻'">
+            <span class="variant-name">${v}</span>
           </div>
         `;
       });
 
       card.innerHTML = `
         <div class="card-header">
-          <span class="spirit-title">${allVarsMastered ? '👑 ' : ''}${s.name}</span>
-          <span class="rarity-badge">${s.rarity}</span>
+          <span class="spirit-title">${s.name}</span>
         </div>
         <div class="card-body">
           <p class="spirit-desc">${s.desc}</p>
-          <div class="variants-list">${variantsHtml}</div>
+          <div class="variants-gallery">${variantsHtml}</div>
         </div>
       `;
 
